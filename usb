@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This script allows you to mount a disk on the wsl
+# file system and changes the current directory to
+# the root of the disk.
+
+# Example.
+# Type: usb X
+# X is the character of the disk unit assigned to 
+# the disk unit by the windows environment
+
+# Checking if parameter is given
+if [ ! ${1} ]
+then
+    echo "Type: usb Drive_Letter  "
+    echo "e.g.: usb I "
+    exit 1
+fi
+# If not mounted check if file /mnt/${1}/ doesn't exist to create it
+if [ ! -e /mnt/${1} ]
+then
+    sudo mkdir /mnt/$1
+fi
+# Check if the drive is already mounted
+if  ! mountpoint -q -- "/mnt/${1}/"
+then
+    # Mounts the drive in the /mnt/${1} dir
+    sudo mount -t drvfs ${1}: /mnt/$1
+fi
+
+echo "Drive ${1} mounted at /mnt/${1}/"
+# Changes dir to /mnt/${1} dir
+cd /mnt/${1}
+# Necessary to execute the commands of cd
+exec bash
